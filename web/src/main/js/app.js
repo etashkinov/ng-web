@@ -1,59 +1,51 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'toastr/build/toastr.css';
-
 const React = require('react');
 const ReactDOM = require('react-dom');
-const client = require('./client');
+const Rest = require('rest');
+const LC = require('literallycanvas');
 
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {employees: []};
     }
 
-    componentDidMount() {
-        client({method: 'GET', path: '/api/employees'}).done(response => {
-            this.setState({employees: response.entity});
+    render() {
+        return (
+            <SubmitForm/>
+        )
+    }
+}
+
+class SubmitForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit() {
+        Rest({method: 'POST', path: '/api/evaluate', entity: this.state.value}).done(response => {
+            this.state = {value: response.entity};
         });
     }
 
-    render() {
-        return (
-            <EmployeeList employees={this.state.employees}/>
-        )
+    handleChange(event) {
+        this.setState({value: event.target.value});
     }
-}
 
-class EmployeeList extends React.Component {
     render() {
-        var employees = this.props.employees.map(employee =>
-            <Employee key={employee.lastName} employee={employee}/>
-        );
-        return (
-            <table>
-                <tbody>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Description</th>
-                </tr>
-                {employees}
-                </tbody>
-            </table>
-        )
-    }
-}
 
-class Employee extends React.Component {
-    render() {
         return (
-            <tr>
-                <td>{this.props.employee.firstName}</td>
-                <td>{this.props.employee.lastName}</td>
-                <td>{this.props.employee.description}</td>
-            </tr>
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Image:
+                    <input type="file" onChange = {this.handleChange}  />
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
         )
     }
 }

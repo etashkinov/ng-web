@@ -13,7 +13,7 @@ public class WebController {
 
     @RequestMapping(value = "/")
     String index() {
-        return "index";
+        return "index.html";
     }
 
 }
