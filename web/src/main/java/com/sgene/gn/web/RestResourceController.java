@@ -24,7 +24,14 @@ public class RestResourceController {
 
     @RequestMapping(value="evaluate", method = RequestMethod.POST)
     String evaluate(@RequestBody byte[] image) {
-        return this.api.evaluate(image);
+        System.err.println("Evaluate image:");
+        System.err.println(Arrays.toString(image));
+        try {
+            return this.api.evaluate(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return String.valueOf(image.length);
+        }
     }
 
     @RequestMapping(value = "employees")
