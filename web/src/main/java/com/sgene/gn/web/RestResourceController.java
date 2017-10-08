@@ -5,6 +5,7 @@
 package com.sgene.gn.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -34,22 +35,19 @@ public class RestResourceController {
         }
     }
 
-    @RequestMapping(value = "employees")
-    Collection<Map<String,String>> getEmployees() {
-        Map<String, String> emp1 = new HashMap<>();
-        emp1.put("firstName", "Homer");
-        emp1.put("lastName", "Simpson");
-        emp1.put("description", "Security Officer");
+    @RequestMapping(value = "categories", produces = MediaType.APPLICATION_JSON_VALUE)
+    Collection<Map<String,Object>> geCategories() {
+        Map<String, Object> emp1 = new HashMap<>();
+        emp1.put("value", 0);
+        emp1.put("label", "Line");
 
-        Map<String, String> emp2 = new HashMap<>();
-        emp2.put("firstName", "Montgomery");
-        emp2.put("lastName", "Burns");
-        emp2.put("description", "Owner");
+        Map<String, Object> emp2 = new HashMap<>();
+        emp2.put("value", 1);
+        emp2.put("label", "Circle");
 
-        Map<String, String> emp3 = new HashMap<>();
-        emp3.put("firstName", "Waylon");
-        emp3.put("lastName", "Smithers");
-        emp3.put("description", "CEO");
+        Map<String, Object> emp3 = new HashMap<>();
+        emp3.put("value", 2);
+        emp3.put("label", "Arch");
 
         return Arrays.asList(emp1, emp2, emp3);
     }
