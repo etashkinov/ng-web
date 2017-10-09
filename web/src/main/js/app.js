@@ -8,7 +8,7 @@ const client = require('./client');
 
 var getImage = function() {
     var c = document.querySelector(".lower-canvas")
-    return c.getContext("2d").getImageData(0,0,c.width,c.height).data;
+    return c.toDataURL();
 }
 
 class App extends React.Component {
@@ -115,6 +115,8 @@ class Answer extends React.Component {
 
     closeNo() {
       this.setState({ showNo: false });
+      var imgData = getImage();
+      client({method: 'POST', path: '/api/train?category=' + this.state.category.value, entity: imgData});
     }
 
     render() {
@@ -152,7 +154,7 @@ class Answer extends React.Component {
                         options={this.props.options}/>
             </Modal.Body>
             <Modal.Footer>
-              <Button onClick={this.closeNo}>Close</Button>
+              <Button bsStyle="primary" onClick={this.closeNo}>Submit</Button>
             </Modal.Footer>
           </Modal>
         </div>

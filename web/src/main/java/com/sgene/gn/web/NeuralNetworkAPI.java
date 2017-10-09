@@ -20,6 +20,14 @@ public class NeuralNetworkAPI {
     }
 
     public String evaluate(byte[] image) {
-        return this.restTemplate.postForEntity("/evaluate", image, String.class).getBody();
+        return
+//                String.valueOf(image.length);
+        this.restTemplate.postForEntity("/evaluate", image, String.class).getBody();
+    }
+
+    public String train(byte[] image, String category) {
+        return
+//                String.valueOf(image.length);
+        this.restTemplate.postForEntity("/train?category=" + category, image, String.class).getBody();
     }
 }

@@ -7,7 +7,9 @@ package com.sgene.gn.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.BASE64Decoder;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,11 +26,28 @@ public class RestResourceController {
     }
 
     @RequestMapping(value="evaluate", method = RequestMethod.POST)
-    String evaluate(@RequestBody byte[] image) {
-        System.err.println("Evaluate image:");
-        System.err.println(Arrays.toString(image));
+    String evaluate(@RequestBody String encodedImage) throws IOException {
+        System.err.println("Evaluate image: " + encodedImage);
+
+        byte[] image = getImage(encodedImage);
         try {
             return this.api.evaluate(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return String.valueOf(image.length);
+        }
+    }
+
+    private byte[] getImage(String encodedImage) throws IOException {
+        return new BASE64Decoder().decodeBuffer(encodedImage.split(",")[1]);
+    }
+
+    @RequestMapping(value="train", method = RequestMethod.POST)
+    String train(@RequestBody String encodedImage, @RequestParam String category) throws IOException {
+        System.err.println("Train " + category + " with image: " + encodedImage);
+        byte[] image = getImage(encodedImage);
+        try {
+            return this.api.train(image, category);
         } catch (Exception e) {
             e.printStackTrace();
             return String.valueOf(image.length);
@@ -39,11 +58,12 @@ public class RestResourceController {
     Collection<Map<String,Object>> geCategories() {
         Map<String, Object> emp1 = new HashMap<>();
         emp1.put("value", 0);
-        emp1.put("label", "Line");
+        emp1.put("label", "Circle");
 
         Map<String, Object> emp2 = new HashMap<>();
         emp2.put("value", 1);
-        emp2.put("label", "Circle");
+        emp2.put("label", "Line");
+
 
         Map<String, Object> emp3 = new HashMap<>();
         emp3.put("value", 2);
