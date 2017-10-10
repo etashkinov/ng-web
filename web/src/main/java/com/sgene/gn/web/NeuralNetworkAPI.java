@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class NeuralNetworkAPI {
+class NeuralNetworkAPI {
     private final RestTemplate restTemplate;
 
     @Autowired
@@ -19,15 +19,15 @@ public class NeuralNetworkAPI {
         this.restTemplate = restTemplateBuilder.rootUri(neuralNetworkRootURI).build();
     }
 
-    public String evaluate(byte[] image) {
-        return
-//                String.valueOf(image.length);
-        this.restTemplate.postForEntity("/evaluate", image, String.class).getBody();
+    String predict(String image) {
+        return this.restTemplate.postForEntity("/predict", image, String.class).getBody();
     }
 
-    public String train(byte[] image, String category) {
-        return
-//                String.valueOf(image.length);
-        this.restTemplate.postForEntity("/train?category=" + category, image, String.class).getBody();
+    String fit(String image, String label) {
+        return this.restTemplate.postForEntity("/fit?label=" + label, image, String.class).getBody();
+    }
+
+    String[] labels() {
+        return this.restTemplate.getForEntity("/labels", String[].class).getBody();
     }
 }

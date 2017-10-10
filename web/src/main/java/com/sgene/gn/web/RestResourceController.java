@@ -4,20 +4,19 @@
 
 package com.sgene.gn.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.BASE64Decoder;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/")
 public class RestResourceController {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestResourceController.class);
 
     private final NeuralNetworkAPI api;
 
@@ -25,50 +24,43 @@ public class RestResourceController {
         this.api = api;
     }
 
-    @RequestMapping(value="evaluate", method = RequestMethod.POST)
-    String evaluate(@RequestBody String encodedImage) throws IOException {
-        System.err.println("Evaluate image: " + encodedImage);
-
-        byte[] image = getImage(encodedImage);
+    @RequestMapping(value="predict", method = RequestMethod.POST)
+    String predict(@RequestBody String encodedImage) throws IOException {
+        String image = getImageInBase64(encodedImage);
         try {
-            return this.api.evaluate(image);
+            return api.predict(image);
         } catch (Exception e) {
-            e.printStackTrace();
-            return String.valueOf(image.length);
+            LOGGER.error("Failed to predict " + encodedImage, e);
+            return  String.valueOf(image.length());
         }
     }
 
-    private byte[] getImage(String encodedImage) throws IOException {
-        return new BASE64Decoder().decodeBuffer(encodedImage.split(",")[1]);
+    private String getImageInBase64(String encodedImage) throws IOException {
+        return encodedImage.split(",")[1];
     }
 
-    @RequestMapping(value="train", method = RequestMethod.POST)
-    String train(@RequestBody String encodedImage, @RequestParam String category) throws IOException {
-        System.err.println("Train " + category + " with image: " + encodedImage);
-        byte[] image = getImage(encodedImage);
+    @RequestMapping(value="fit", method = RequestMethod.POST)
+    String fit(@RequestBody String encodedImage, @RequestParam String label) throws IOException {
+        String image = getImageInBase64(encodedImage);
         try {
-            return this.api.train(image, category);
+            return api.fit(image, label);
         } catch (Exception e) {
-            e.printStackTrace();
-            return String.valueOf(image.length);
+            LOGGER.error("Failed to fit " + label + " with " + encodedImage, e);
+            return String.valueOf(image.length());
         }
     }
 
-    @RequestMapping(value = "categories", produces = MediaType.APPLICATION_JSON_VALUE)
-    Collection<Map<String,Object>> geCategories() {
-        Map<String, Object> emp1 = new HashMap<>();
-        emp1.put("value", 0);
-        emp1.put("label", "Circle");
+    @RequestMapping(value = "labels", produces = MediaType.APPLICATION_JSON_VALUE)
+    Collection<Map<String,Object>> getLabels() {
+        String[] labels = api.labels();
+        Collection<Map<String, Object>> result = new ArrayList<>(labels.length);
+        for (int i = 0; i < labels.length; i++) {
+            Map<String, Object> option = new HashMap<>();
+            option.put("value", labels[i]);
+            option.put("label", labels[i].substring(0, 1).toUpperCase() + labels[i].substring(1));
+            result.add(option);
+        }
 
-        Map<String, Object> emp2 = new HashMap<>();
-        emp2.put("value", 1);
-        emp2.put("label", "Line");
-
-
-        Map<String, Object> emp3 = new HashMap<>();
-        emp3.put("value", 2);
-        emp3.put("label", "Arch");
-
-        return Arrays.asList(emp1, emp2, emp3);
+        return result;
     }
 }
