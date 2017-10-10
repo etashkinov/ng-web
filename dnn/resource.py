@@ -53,7 +53,7 @@ def index():
 def predict():
     data = request.get_data()
     print('Data to predict:', data)
-    return node.predict(get_image(data))
+    return jsonify(node.predict(get_image(data))), 200, {'Content-Type': 'application/json'}
 
 
 @app.route('/fit', methods=('POST',))

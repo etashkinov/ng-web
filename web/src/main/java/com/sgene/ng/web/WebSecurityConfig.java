@@ -2,7 +2,7 @@
  * Copyright (c) 2017 EMC Corporation All Rights Reserved
  */
 
-package com.sgene.gn.web;
+package com.sgene.ng.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

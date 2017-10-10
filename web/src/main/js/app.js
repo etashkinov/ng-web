@@ -124,10 +124,29 @@ class Answer extends React.Component {
     }
 
     render() {
+        let confidence = this.props.value.confidence;
+        let title;
+        if (confidence === 'SURE') {
+            title = <div>
+                        <h3>This is</h3>
+                        <h3><Label bsStyle="primary">{this.props.value.labels[0]}</Label></h3>
+                        <h3>I'm sure, right?</h3>
+                    </div>
+        } else if (confidence === 'UNCERTAIN') {
+            title = <div>
+                        <h3>I am not sure. It is either</h3>
+                        <h3>
+                            <Label bsStyle="primary">{this.props.value.labels[0]}</Label> or <Label bsStyle="primary">{this.props.value.labels[1]}</Label>
+                        </h3>
+                        <h3>What is it?</h3>
+                    </div>
+        } else {
+            title = <h3>Oh! I have no idea what it is. Help me, please.</h3>
+        }
+
         return (
             <div>
-                <h2><Label bsStyle="primary">{this.props.value}</Label></h2>
-                <h3>Am I right?</h3>
+                {title}
                 <ButtonGroup>
                     <Button bsStyle="primary" onClick={this.onYes}>Yes</Button>
                     <Button bsStyle="default" onClick={this.onNo}>No</Button>

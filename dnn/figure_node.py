@@ -84,6 +84,6 @@ class FigureNode:
     def predict(self, image):
         array = img_to_array(image)
         prediction = self.model.predict((array,))
-        print('Predicted:', list(zip(LABELS, prediction[0])))
-        argmax = np.argmax(prediction[0])
-        return LABELS[int(argmax)]
+        result = dict(zip(LABELS, prediction[0]))
+        print('Predicted:', result)
+        return result

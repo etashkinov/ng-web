@@ -2,7 +2,7 @@
  * Copyright (c) 2017 EMC Corporation All Rights Reserved
  */
 
-package com.sgene.gn.web;
+package com.sgene.ng.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

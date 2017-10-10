@@ -1,4 +1,4 @@
-package com.sgene.gn.web;
+package com.sgene.ng.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

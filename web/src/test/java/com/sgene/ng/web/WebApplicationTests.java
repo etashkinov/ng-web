@@ -1,4 +1,4 @@
-package com.sgene.gn.web;
+package com.sgene.ng.web;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
