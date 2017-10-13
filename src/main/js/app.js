@@ -1,5 +1,5 @@
 import {SketchField, Tools} from 'react-sketch';
-import {PageHeader, Panel, Grid, Row, Col, Button, ButtonGroup, Label, Modal} from 'react-bootstrap';
+import {PageHeader, Panel, Grid, Row, Col, Button, ButtonGroup, ButtonToolbar, Label} from 'react-bootstrap';
 import {Creatable} from 'react-select';
 
 const React = require('react');
@@ -40,17 +40,16 @@ class App extends React.Component {
         return (
             <Grid>
                 <Row className="show-grid">
-                    <Col xsHidden md={3}/>
-                    <Col xs={12} md={6}>
-                        <PageHeader>Teach me:
-                            <small>Ask a question</small>
+                    <Col xsHidden md={2}/>
+                    <Col xs={12} md={8}>
+                        <PageHeader>Teach me: <small>Ask a question</small>
                         </PageHeader>
                     </Col>
-                    <Col xsHidden md={3}/>
+                    <Col xsHidden md={2}/>
                 </Row>
                 <Row className="show-grid">
-                    <Col xsHidden md={3}/>
-                    <Col xs={8} md={4}>
+                    <Col xsHidden md={2}/>
+                    <Col xs={8} md={5}>
                         <Panel>
                             <SketchField
                                 height='300px'
@@ -61,15 +60,46 @@ class App extends React.Component {
                         </Panel>
                         <Button bsStyle="default" onClick={this.onClear}>Clear</Button>
                     </Col>
-                    <Col xs={4} md={2}>
+                    <Col xs={4} md={3}>
                         {this.state.answer
                             ? <Answer parent={this} options={this.state.labels} value={this.state.answer}/>
                             : <Prompt parent={this} labels={this.state.labels}/>}
                     </Col>
-                    <Col xsHidden md={3}/>
+                    <Col xsHidden md={2}/>
                 </Row>
             </Grid>
         )
+    }
+}
+
+class FitSelector extends React.Component {
+    constructor(params) {
+        super(params);
+        this.onFit = this.onFit.bind(this);
+        this.state = {label: null};
+    }
+
+    onFit() {
+        let imgData = getImage();
+        client({method: 'POST', path: '/api/fit?label=' + this.state.label.value, entity: imgData});
+    }
+
+    render() {
+        return (
+            <div>
+                <Creatable
+                    name="form-field-name"
+                    value={this.state.label}
+                    onChange={value => this.setState({label: value})}
+                    options={this.props.options}/>
+                <h3>
+                    <ButtonToolbar>
+                        <Button bsStyle="primary" onClick={this.onFit}>Submit</Button>
+                        <Button onClick={this.props.app.onClear}>Nevermind</Button>
+                    </ButtonToolbar>
+                </h3>
+            </div>
+        );
     }
 }
 
@@ -96,92 +126,64 @@ class Answer extends React.Component {
 
     constructor(params) {
         super(params);
-
-        this.onYes = this.onYes.bind(this);
-        this.onNo = this.onNo.bind(this);
-        this.closeYes = this.closeYes.bind(this);
-        this.closeNo = this.closeNo.bind(this);
-        this.state = {showYes: false, showNo: false, label: null};
+        this.state = {sure: this.props.value.confidence === 'SURE', label: null};
     }
-
-    onYes() {
-        this.setState({showYes: true});
-    }
-
-    onNo() {
-        this.setState({showNo: true});
-    }
-
-    closeYes() {
-        this.props.parent.onClear();
-        this.setState({showYes: false});
-    }
-
-    closeNo() {
-        this.setState({showNo: false});
-        let imgData = getImage();
-        client({method: 'POST', path: '/api/fit?label=' + this.state.label.value, entity: imgData});
-    }
-
     render() {
+        let selector = this.getSelector();
+
+        let title = this.getTitle();
+
+        return (<div>{title}{selector}</div>)
+    }
+
+    getTitle() {
         let confidence = this.props.value.confidence;
-        let title;
         if (confidence === 'SURE') {
-            title = <div>
-                        <h3>This is</h3>
-                        <h3><Label bsStyle="primary">{this.props.value.labels[0]}</Label></h3>
-                        <h3>I'm sure, right?</h3>
-                    </div>
+            return (
+                <div>
+                    <h3>This is</h3>
+                    <h3>
+                        <Label bsStyle="primary">{this.props.value.labels[0]}</Label>
+                    </h3>
+                </div>
+            );
         } else if (confidence === 'UNCERTAIN') {
-            title = <div>
-                        <h3>I am not sure. It is either</h3>
-                        <h3>
-                            <Label bsStyle="primary">{this.props.value.labels[0]}</Label> or <Label bsStyle="primary">{this.props.value.labels[1]}</Label>
-                        </h3>
-                        <h3>What is it?</h3>
-                    </div>
+            return (
+                <div>
+                    <h3>I am not sure. It is either</h3>
+                    <h3>
+                        <Label bsStyle="primary">{this.props.value.labels[0]}</Label> or <Label bsStyle="primary">{this.props.value.labels[1]}</Label>
+                    </h3>
+                </div>
+            );
         } else {
-            title = <h3>Oh! I have no idea what it is. Help me, please.</h3>
+            return (
+                <div>
+                    <h3>Oh! I have no idea what it is. Help me, please.</h3>
+                </div>
+            );
         }
+    }
 
-        return (
-            <div>
-                {title}
-                <ButtonGroup>
-                    <Button bsStyle="primary" onClick={this.onYes}>Yes</Button>
-                    <Button bsStyle="default" onClick={this.onNo}>No</Button>
-                </ButtonGroup>
-
-                <Modal show={this.state.showYes} onHide={this.closeYes}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Hurrah!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <h4>I know, I am awesome</h4>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.closeYes}>Close</Button>
-                    </Modal.Footer>
-                </Modal>
-
-                <Modal show={this.state.showNo} onHide={this.closeNo}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Oh no!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <h4>Tell me what it was</h4>
-                        <Creatable
-                            name="form-field-name"
-                            value={this.state.label}
-                            onChange={value => this.setState({label: value})}
-                            options={this.props.options}/>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button bsStyle="primary" onClick={this.closeNo}>Submit</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
-        )
+    getSelector() {
+        if (this.state.sure) {
+            return (
+                <div>
+                    <h3>I'm sure, right?</h3>
+                    <ButtonGroup>
+                        <Button bsStyle="primary" onClick={this.props.parent.onClear}>Yes</Button>
+                        <Button bsStyle="default" onClick={() => this.setState({sure: false})}>No</Button>
+                    </ButtonGroup>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <h3>Tell me what it was</h3>
+                    <FitSelector options={this.props.options} app={this.props.parent}/>
+                </div>
+            );
+        }
     }
 }
 
