@@ -82,6 +82,7 @@ class FitSelector extends React.Component {
     onFit() {
         let imgData = getImage();
         client({method: 'POST', path: '/api/fit?label=' + this.state.label.value, entity: imgData});
+        this.props.app.onClear();
     }
 
     render() {

@@ -1,12 +1,12 @@
 branch-defaults:
   master:
     environment: ng-web
+deploy:
+  artifact: target/ng-web-0.0.1-SNAPSHOT.jar
 environment-defaults:
   ng-web:
     branch: null
     repository: null
-deploy:
-  artifact: target/ng-web-0.0.1-SNAPSHOT.jar
 global:
   application_name: ng
   default_ec2_keyname: null
