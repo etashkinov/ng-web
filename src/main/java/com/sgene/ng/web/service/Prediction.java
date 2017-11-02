@@ -2,15 +2,16 @@
  * Copyright (c) 2017 EMC Corporation All Rights Reserved
  */
 
-package com.sgene.ng.web;
+package com.sgene.ng.web.service;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class Prediction {
     private final Confidence confidence;
-    private final Collection<String> labels;
+    private final List<String> labels;
 
-    public Prediction(Confidence confidence, Collection<String> labels) {
+    public Prediction(Confidence confidence, List<String> labels) {
         this.confidence = confidence;
         this.labels = labels;
     }
@@ -19,7 +20,7 @@ public class Prediction {
         return confidence;
     }
 
-    public Collection<String> getLabels() {
-        return labels;
+    public List<String> getLabels() {
+        return Collections.unmodifiableList(labels);
     }
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2017 EMC Corporation All Rights Reserved
  */
 
-package com.sgene.ng.web;
+package com.sgene.ng.web.remote;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component
-class NeuralNetworkAPI {
+public class NeuralNetworkAPI {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(NeuralNetworkAPI.class);
 
@@ -46,16 +46,16 @@ class NeuralNetworkAPI {
         this.restTemplate.setErrorHandler(new ErrorHandler());
     }
 
-    Map<String, Double> predict(String image) {
+    public Map<String, Double> predict(String image) {
         ParameterizedTypeReference<Map<String, Double>> type = new ParameterizedTypeReference<Map<String, Double>>() {};
         return this.restTemplate.exchange("/predict", HttpMethod.POST, new HttpEntity<>(image), type).getBody();
     }
 
-    String fit(String image, String label) {
+    public String fit(String image, String label) {
         return this.restTemplate.postForEntity("/fit?label=" + label, image, String.class).getBody();
     }
 
-    String[] labels() {
+    public String[] getLabels() {
         return this.restTemplate.getForEntity("/labels", String[].class).getBody();
     }
 }
