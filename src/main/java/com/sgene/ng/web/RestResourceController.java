@@ -40,7 +40,7 @@ public class RestResourceController {
         return service.fit(image, label);
     }
 
-    @RequestMapping(value = "getLabels", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "labels", produces = MediaType.APPLICATION_JSON_VALUE)
     Collection<Map<String, String>> getLabels() {
         return service.getLabels();
     }

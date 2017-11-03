@@ -52,7 +52,7 @@ public class RestResourceControllerTest {
         option.put("value", "line");
         when(service.getLabels()).thenReturn(Collections.singletonList(option));
 
-        mvc.perform(get("/api/getLabels"))
+        mvc.perform(get("/api/labels"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json("[{\"label\":\"Line\",\"value\":\"line\"}]"));
