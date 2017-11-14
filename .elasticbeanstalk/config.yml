@@ -1,17 +1,16 @@
 branch-defaults:
   master:
-    environment: ng-web
+    environment: ng-web-docker
 deploy:
-  artifact: target/ng-web-0.0.1-SNAPSHOT.jar
+  artifact: target/ng-web-0.0.1-SNAPSHOT.zip
 environment-defaults:
   ng-web:
     branch: null
     repository: null
 global:
   application_name: ng
-  default_ec2_keyname: null
-  default_platform: arn:aws:elasticbeanstalk:eu-west-2::platform/Java 8 running on
-    64bit Amazon Linux/2.5.5
+  default_ec2_keyname: aws-eb-home
+  default_platform: arn:aws:elasticbeanstalk:eu-west-2::platform/Docker running on 64bit Amazon Linux/2.7.4eb log
   default_region: eu-west-2
   include_git_submodules: true
   instance_profile: null
@@ -20,3 +19,4 @@ global:
   profile: eb-cli
   sc: git
   workspace_type: Application
+
